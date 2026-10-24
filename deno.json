@@ -1,9 +1,15 @@
 {
+    "compilerOptions": {
+        "lib": [
+            "deno.window",
+            "dom"
+        ]
+    },
     "imports": {
         "@std/assert": "jsr:@std/assert@1",
         "@std/http": "jsr:@std/http@^1.0.0"
     },
     "tasks": {
-        "dev": "deno run --watch --allow-net server.ts"
+        "dev": "deno run --watch --allow-net main.ts"
     }
 }
