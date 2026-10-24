@@ -3,7 +3,10 @@ import { serveDir } from "@std/http";
 // 直前の単語を保持しておく
 const wordHistories: string[] = [];
 
-// 直前の単語を返す
+/**
+ * 直前の単語を返す
+ * @returns 直前の単語
+ */
 function getPreviousWord() {
 
   return new Response(
@@ -13,6 +16,49 @@ function getPreviousWord() {
   );
 
 };
+
+/**
+ * 末尾が小さい文字かどうかを判定する
+ * @param word 判定する単語
+ * @returns 末尾が小さい文字かどうか
+ */
+function isSmallKana(word: string) {
+  return /[ぁぃぅぇぉっゃゅょゎ]$/.test(word);
+}
+
+/**
+ * 2つの単語が指定された文字数で一致するかどうかを判定する
+ * @param previousWord 前の単語
+ * @param nextWord 次の単語
+ * @param checkLength 照合する文字数
+ * @returns 一致するかどうか
+ */
+function isMatch(
+  previousWord: string
+  , nextWord: string
+  , checkLength: number = 1
+) {
+  return previousWord.slice(-checkLength) === nextWord.slice(0, checkLength);
+}
+
+/**
+ * 単語がひらがなかどうかを判定する
+ * @param word 判定する単語
+ * @returns ひらがなかどうか
+ */
+function isHiragana(word: string) {
+  return /^[ぁ-んー]+$/.test(word);
+}
+
+/**
+ * 過去に使用したことのある単語かどうかを判定する
+ * @param previousWord 直前の単語
+ * @param word 判定する単語
+ * @returns 過去に使用したことのある単語かどうか
+ */
+function isUsedWord(previousWord: string, word: string) {
+  return wordHistories.includes(word) || previousWord === word;
+}
 
 // 次の単語を受け取って保存する
 async function postNextWord(request: Request) {
@@ -24,31 +70,20 @@ async function postNextWord(request: Request) {
   const previousWord = requestJson["previousWord"];
 
   let minChar;
-  let matchCheck = false;
+  let isMatchCheck = false;
 
-  // wordHistoriesの末尾2文字とnextWordの先頭2文字が同一か確認
-  if (
-    /[ぁぃぅぇぉっゃゅょゎ]$/.test(previousWord)
-  ) {
-    if (previousWord.slice(-2) === nextWord.slice(0, 2)) {
-      // 小音が末尾の場合は2文字以下を禁止
+  if (isSmallKana(previousWord)) {
+    if (isMatch(previousWord, nextWord, 2)) {
       minChar = 2;
-
-      matchCheck = true;
-    } // wordHistoriesの末尾とnextWordの先頭が同一か確認
-  } else if (
-    previousWord.slice(-1) === nextWord.slice(0, 1)
-  ) {
-    // 通常文字数は1文字以下を禁止
+      isMatchCheck = true;
+    }
+  } else if ((isMatch(previousWord, nextWord))) {
     minChar = 1;
-
-    matchCheck = true;
+    isMatchCheck = true;
   }
 
-  //
-  if (matchCheck) {
-    // ひらがな以外が入力された場合
-    if (!/^[ぁ-んー]+$/.test(nextWord)) {
+  if (isMatchCheck) {
+    if (!isHiragana(nextWord)) {
       return new Response(
         JSON.stringify({
           "errorMessage": "ひらがな以外の文字は使えません",
@@ -63,11 +98,10 @@ async function postNextWord(request: Request) {
       );
     }
 
-    // 一文字の単語を入力した場合
     if (nextWord.length === minChar) {
       return new Response(
         JSON.stringify({
-          "errorMessage": "一文字の単語は使えません",
+          "errorMessage": "一音の単語は使えません",
           "errorCode": "10005",
         }),
         {
@@ -79,8 +113,7 @@ async function postNextWord(request: Request) {
       );
     }
 
-    // 過去に使用した単語になっている場合
-    if (wordHistories.includes(nextWord) || previousWord === nextWord) {
+    if (isUsedWord(previousWord, nextWord)) {
       return new Response(
         JSON.stringify({
           "errorMessage": "過去に使用した単語は使えません",
@@ -95,11 +128,7 @@ async function postNextWord(request: Request) {
       );
     }
 
-    // 末尾が「ん」になっている場合
-    // ifの中に入力された単語の末尾が「ん」になっていることを確認する条件式を追加
     if (nextWord.slice(-1) === "ん") {
-      // エラーを返す処理を追加
-      // errorCodeを固有のものにして、末尾が「ん」の時に発生したエラーだとWeb側に通知できるようにする
       return new Response(
         JSON.stringify({
           "errorMessage": "「ん」で終わる単語は使えません",
