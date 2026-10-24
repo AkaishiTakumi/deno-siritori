@@ -11,6 +11,7 @@
         "vite": "npm:vite@^8.3.5"
     },
     "tasks": {
-        "dev": "deno run -A --watch main.ts"
+        "build:watch": "deno run -A npm:vite build --watch",
+        "serve": "deno run -A main.ts"
     }
 }

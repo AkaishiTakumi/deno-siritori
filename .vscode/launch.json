@@ -1,26 +1,19 @@
 {
-    // IntelliSense を使用して利用可能な属性を学べます。
-    // 既存の属性の説明をホバーして表示します。
-    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Deno: Serve & Watch",
             "type": "node",
-            "program": "${workspaceFolder}/main.ts",
-            "cwd": "${workspaceFolder}",
-            "env": {},
             "runtimeExecutable": "deno",
             "runtimeArgs": [
                 "run",
-                "--unstable",
-                "--config",
-                "./deno.json",
-                "--inspect-wait",
-                "--allow-all"
+                "-A",
+                "--inspect"
             ],
-            "attachSimplePort": 9229
+            "program": "${workspaceFolder}/main.ts",
+            "attachSimplePort": 9229,
+            "preLaunchTask": "Deno: Build Watch"
         }
     ]
 }
