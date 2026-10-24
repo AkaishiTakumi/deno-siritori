@@ -85,7 +85,7 @@ async function postNextWord(request: Request) {
       JSON.stringify({
         "previousWord": previousWord,
         "errorMessage": "前の単語に続いていません",
-        "errorCode": "10001",
+        "errorCode": "nextWordNotMatchPreviousWord",
       }),
       {
         status: 400,
@@ -100,7 +100,7 @@ async function postNextWord(request: Request) {
     return new Response(
       JSON.stringify({
         "errorMessage": "「ん」で終わる単語は使えません",
-        "errorCode": "10002",
+        "errorCode": "nnEndWord",
       }),
       {
         status: 400,
@@ -115,7 +115,7 @@ async function postNextWord(request: Request) {
     return new Response(
       JSON.stringify({
         "errorMessage": "ひらがな以外の文字は使えません",
-        "errorCode": "10003",
+        "errorCode": "notHiragana",
       }),
       {
         status: 400,
@@ -130,7 +130,7 @@ async function postNextWord(request: Request) {
     return new Response(
       JSON.stringify({
         "errorMessage": "過去に使用した単語は使えません",
-        "errorCode": "10004",
+        "errorCode": "usedWord",
       }),
       {
         status: 400,
@@ -145,7 +145,7 @@ async function postNextWord(request: Request) {
     return new Response(
       JSON.stringify({
         "errorMessage": "一音の単語は使えません",
-        "errorCode": "10005",
+        "errorCode": "singleSoundWord",
       }),
       {
         status: 400,

@@ -41,14 +41,14 @@ nextWordSendButtonElement.onclick = async (_) => {
   if (response.status !== 200) {
     const responseJson = await response.json();
     // errorCodeが、末尾が「ん」の時のエラーだったら、ゲームを終了する
-    if (responseJson["errorCode"] === "10002") {
+    if (responseJson["errorCode"] === "nnEndWord") {
       alert("ゲーム終了");
 
       // inputタグと送信ボタンを無効化する
       nextWordInput.disabled = true;
       nextWordSendButtonElement.disabled = true;
     } // errorCodeが、過去に使用した単語の時のエラーだったら、ゲームを終了する
-    else if (responseJson["errorCode"] === "10003") {
+    else if (responseJson["errorCode"] === "usedWord") {
       alert("ゲーム終了");
 
       // inputタグと送信ボタンを無効化する
