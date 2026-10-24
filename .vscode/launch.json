@@ -15,7 +15,9 @@
             "runtimeArgs": [
                 "run",
                 "--unstable",
-                "--inspect-brk",
+                "--config",
+                "./deno.json",
+                "--inspect-wait",
                 "--allow-all"
             ],
             "attachSimplePort": 9229
