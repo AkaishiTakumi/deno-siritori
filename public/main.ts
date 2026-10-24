@@ -75,7 +75,7 @@ nextWordSendButtonElement.onclick = async (_) => {
   nextWordInput.value = "";
 };
 
-// 送信ボタンの押下時に実行
+// リセットボタンの押下時に実行
 resetSendButtonElement.onclick = async (_) => {
   // POST /resetを実行
   await fetch("/reset", { method: "POST" });
