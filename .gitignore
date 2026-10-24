@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 
 # temp
 .commit_template
+
+# documentation
+.docs/prompt.md
