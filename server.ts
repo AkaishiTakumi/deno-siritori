@@ -1,4 +1,4 @@
-import { serveDir, serveFile } from "jsr:@std/http/file-server";
+import { serveDir, serveFile } from "@std/http/file-server";
 
 // 直前の単語を保持しておく
 const wordHistories: string[] = [];
