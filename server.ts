@@ -1,7 +1,7 @@
-import { serveDir } from "jsr:@std/http/file-server";
+import { serveDir, serveFile } from "jsr:@std/http/file-server";
 
 // 直前の単語を保持しておく
-const wordHistories = [];
+const wordHistories: string[] = [];
 
 // localhostにDenoのHTTPサーバーを展開
 Deno.serve(async (_req) => {
@@ -179,4 +179,23 @@ Deno.serve(async (_req) => {
       enableCors: true,
     },
   );
+});
+
+Deno.serve((req: Request) => {
+  const pathname = new URL(req.url).pathname;
+
+  if (pathname === "/simple_file") {
+    return serveFile(req, "./path/to/file.txt");
+  }
+
+  if (pathname.startsWith("/static")) {
+    return serveDir(req, {
+      fsRoot: "public",
+      urlRoot: "static",
+    });
+  }
+
+  return new Response("404: Not Found", {
+    status: 404,
+  });
 });

@@ -1,0 +1,8 @@
+{
+    "imports": {
+        "@std/http/file-server": "jsr:@std/http@^1.1.4/file-server"
+    },
+    "tasks": {
+        "dev": "deno run --watch server.ts"
+    }
+}
