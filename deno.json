@@ -6,8 +6,12 @@
         ]
     },
     "imports": {
+        "@deno/esbuild-plugin": "jsr:@deno/esbuild-plugin@^1.2.1",
         "@std/assert": "jsr:@std/assert@1",
-        "@std/http": "jsr:@std/http@^1.0.0"
+        "@std/http": "jsr:@std/http@^1.0.0",
+        "esbuild": "npm:esbuild@^0.28.2"
     },
-    "tasks": {}
+    "tasks": {
+        "dev": "deno run -A --watch main.ts"
+    }
 }
