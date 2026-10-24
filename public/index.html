@@ -2,25 +2,21 @@
 <html lang="ja">
 
 <head>
-  <!-- headタグの中にはメタデータ等を記載する -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shiritori</title>
+
   <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-  <!-- bodyタグの中には実際に表示するものなどを書く -->
 
   <h1>しりとり</h1>
-  <!-- 現在の単語を表示する場所 -->
-  <p id="previousWord"></p>
-  <!-- 次の文字を入力するフォーム -->
+  <div id="previousWord"></div>
   <input id="nextWordInput" type="text" />
   <button id="nextWordSendButton">送信</button>
   <button id="resetSendButton">リセット</button>
 
-  <!-- JavaScriptを実行 -->
   <script type="module" src="./main.ts"></script>
 
 </body>
