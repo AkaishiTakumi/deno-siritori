@@ -1,4 +1,11 @@
+import { neon } from "@neon/serverless";
 import { serveDir } from "@std/http";
+
+const databaseUrl = Deno.env.get("DATABASE_URL");
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is not set");
+}
+const sql = neon(databaseUrl);
 
 // 直前の単語を保持しておく
 const wordHistories: string[] = [];
