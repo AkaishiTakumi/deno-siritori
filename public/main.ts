@@ -5,7 +5,7 @@ const nextWordSendButtonElement = document.querySelector("#nextWordSendButton") 
 
 const resetSendButtonElement = document.querySelector("#resetSendButton") as HTMLButtonElement;
 
-window.onload = async (_) => {
+globalThis.onload = async (_) => {
   // GET /shiritoriを実行
   const response = await fetch("/shiritori", { method: "GET" });
   // responseの中からレスポンスのテキストデータを取得

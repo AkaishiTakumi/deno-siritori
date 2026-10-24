@@ -181,7 +181,7 @@ export function startServer() {
         - urlRoot: フォルダを展開するURLを指定。今回はlocalhost:8000/に直に展開する
         - enableCors: CORSの設定を付加するか
         */
-        fsRoot: "./public/",
+        fsRoot: "public",
         urlRoot: "",
         enableCors: true,
       },
