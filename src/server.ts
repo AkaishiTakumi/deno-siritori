@@ -18,28 +18,32 @@ function getPreviousWord() {
 };
 
 /**
+ * リセットする
+ * @returns レスポンス
+ */
+function reset() {
+
+  wordHistories.length = 0;
+  return new Response(
+    JSON.stringify({ "previousWord": "しりとり" }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+    },
+  );
+
+}
+
+/**
  * 末尾が小さい文字かどうかを判定する
  * @param word 判定する単語
  * @returns 末尾が小さい文字かどうか
  */
 function isSmallKana(word: string) {
   return /[ぁぃぅぇぉっゃゅょゎ]$/.test(word);
-}
-
-/**
- * 2つの単語が指定された文字数で一致するかどうかを判定する
- * @param previousWord 前の単語
- * @param nextWord 次の単語
- * @param checkLength 照合する文字数
- * @returns 一致するかどうか
- */
-function isMatch(
-  previousWord: string
-  , nextWord: string
-  , checkLength: number = 1
-) {
-  return previousWord.slice(-checkLength) === nextWord.slice(0, checkLength);
-}
+};
 
 /**
  * 単語がひらがなかどうかを判定する
@@ -60,7 +64,11 @@ function isUsedWord(previousWord: string, word: string) {
   return wordHistories.includes(word) || previousWord === word;
 }
 
-// 次の単語を受け取って保存する
+/**
+ * 次の単語を受け取って保存する
+ * @param request リクエスト
+ * @returns レスポンス
+ */
 async function postNextWord(request: Request) {
 
   // リクエストのペイロードを取得
@@ -69,84 +77,10 @@ async function postNextWord(request: Request) {
   const nextWord = requestJson["nextWord"];
   const previousWord = requestJson["previousWord"];
 
-  let minChar;
-  let isMatchCheck = false;
+  const checkCharLength = isSmallKana(previousWord) ? 2 : 1;
+  const isMatchCheck = previousWord.slice(-checkCharLength) === nextWord.slice(0, checkCharLength);
 
-  if (isSmallKana(previousWord)) {
-    if (isMatch(previousWord, nextWord, 2)) {
-      minChar = 2;
-      isMatchCheck = true;
-    }
-  } else if ((isMatch(previousWord, nextWord))) {
-    minChar = 1;
-    isMatchCheck = true;
-  }
-
-  if (isMatchCheck) {
-    if (!isHiragana(nextWord)) {
-      return new Response(
-        JSON.stringify({
-          "errorMessage": "ひらがな以外の文字は使えません",
-          "errorCode": "10004",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        },
-      );
-    }
-
-    if (nextWord.length === minChar) {
-      return new Response(
-        JSON.stringify({
-          "errorMessage": "一音の単語は使えません",
-          "errorCode": "10005",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        },
-      );
-    }
-
-    if (isUsedWord(previousWord, nextWord)) {
-      return new Response(
-        JSON.stringify({
-          "errorMessage": "過去に使用した単語は使えません",
-          "errorCode": "10003",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        },
-      );
-    }
-
-    if (nextWord.slice(-1) === "ん") {
-      return new Response(
-        JSON.stringify({
-          "errorMessage": "「ん」で終わる単語は使えません",
-          "errorCode": "10002",
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        },
-      );
-    }
-
-    // 同一であれば、wordHistoriesを更新
-    wordHistories.push(previousWord);
-  } // 同一でない単語の入力時に、エラーを返す
-  else {
+  if (!isMatchCheck) {
     return new Response(
       JSON.stringify({
         "previousWord": previousWord,
@@ -162,7 +96,68 @@ async function postNextWord(request: Request) {
     );
   }
 
-  // 現在の単語を返す
+  if (nextWord.slice(-1) === "ん") {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "「ん」で終わる単語は使えません",
+        "errorCode": "10002",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  if (!isHiragana(nextWord)) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "ひらがな以外の文字は使えません",
+        "errorCode": "10003",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  if (isUsedWord(previousWord, nextWord)) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "過去に使用した単語は使えません",
+        "errorCode": "10004",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  if (nextWord.length === checkCharLength) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "一音の単語は使えません",
+        "errorCode": "10005",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  wordHistories.push(previousWord);
+
   return new Response(
     JSON.stringify({ "previousWord": nextWord }),
     {
@@ -193,22 +188,8 @@ export function startServer() {
     }
 
     // POST /reset: リセットする
-    // request.methodとpathnameを確認
     if (request.method === "POST" && pathname === "/reset") {
-
-      // 既存の単語の履歴を初期化する
-      // 初期化した単語を返す
-      wordHistories.length = 0;
-      return new Response(
-        JSON.stringify({ "previousWord": "しりとり" }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        },
-      );
-
+      return reset();
     }
 
     return serveDir(
