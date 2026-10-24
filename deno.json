@@ -3,6 +3,9 @@
         "lib": [
             "deno.window",
             "dom"
+        ],
+        "types": [
+            "npm:@types/node"
         ]
     },
     "imports": {
