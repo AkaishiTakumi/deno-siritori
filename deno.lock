@@ -4,6 +4,7 @@
     "jsr:@neon/serverless@^1.0.1": "1.0.1",
     "jsr:@std/assert@1": "1.0.19",
     "jsr:@std/cli@^1.0.32": "1.0.32",
+    "jsr:@std/dotenv@~0.225.8": "0.225.8",
     "jsr:@std/encoding@^1.0.11": "1.0.11",
     "jsr:@std/fmt@^1.0.10": "1.0.10",
     "jsr:@std/fs@^1.0.24": "1.0.24",
@@ -39,6 +40,9 @@
     },
     "@std/cli@1.0.32": {
       "integrity": "188b3a100d6202d64e3f5bd3d799c7fa4f6d77f92cc65eb7f641c1fa0aa92a66"
+    },
+    "@std/dotenv@0.225.8": {
+      "integrity": "27b8c1a9d00cbf938345a5924487c04d9b27bdd7e7bd1983f54bcf76d0a0174a"
     },
     "@std/encoding@1.0.11": {
       "integrity": "e7cef2f0b3153bccc17431e7c864a1de03a4b6d9647389c43e08aaa775d37385"
@@ -388,6 +392,7 @@
     "dependencies": [
       "jsr:@neon/serverless@^1.0.1",
       "jsr:@std/assert@1",
+      "jsr:@std/dotenv@~0.225.8",
       "jsr:@std/http@1",
       "npm:@types/node@*",
       "npm:vite@^8.3.5"
