@@ -1,4 +1,5 @@
 import { neon } from "@neon/serverless";
+import "@std/dotenv/load";
 import { serveDir } from "@std/http";
 
 const databaseUrl = Deno.env.get("DATABASE_URL");
@@ -9,6 +10,117 @@ const sql = neon(databaseUrl);
 
 // 直前の単語を保持しておく
 const wordHistories: string[] = [];
+
+/**
+ * ルームを作成する
+ * @param magicWord 魔法の単語
+ * @param hostName ホストの名前
+ */
+async function createRoom(
+  magicWord: string,
+  hostName: string,
+) {
+
+  await sql`
+    INSERT INTO rooms (id, magic_word, host_name, number_of_players, is_active, started_at, finished_at, created_at, updated_at)
+    VALUES (
+      gen_random_uuid(),
+      ${magicWord},
+      ${hostName},
+      1,
+      true,
+      NOW(),
+      NULL,
+      NOW(),
+      NOW()
+    )
+  `;
+
+}
+
+async function standby(request: Request) {
+
+  const requestJson = await request.json();
+
+  const userName = requestJson["userName"];
+  const magicWord = requestJson["magicWord"];
+  const isHost = requestJson["isHost"];
+
+  if (!userName) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "userName is not set",
+        "errorCode": "userNameNotSet",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  if (!magicWord) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "magicWord is not set",
+        "errorCode": "magicWordNotSet",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  if (isHost === undefined) {
+    return new Response(
+      JSON.stringify({
+        "errorMessage": "isHost is not set",
+        "errorCode": "isHostNotSet",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      },
+    );
+  }
+
+  // create_atが最新のroomがactiveかclosedかを判定する
+  const room = await sql`
+    SELECT * FROM rooms
+    WHERE magic_word = ${magicWord}
+    ORDER BY created_at DESC
+    LIMIT 1
+  `;
+
+  if (room.length === 0) {
+    await createRoom(magicWord, userName);
+  } else {
+    const isActive = room[0].is_active;
+    if (!isActive) {
+      await createRoom(magicWord, userName);
+    }
+  }
+
+  return new Response(
+    JSON.stringify({
+      "message": "standby success",
+    }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+    },
+  );
+
+}
 
 /**
  * 直前の単語を返す
@@ -78,9 +190,8 @@ function isUsedWord(previousWord: string, word: string) {
  */
 async function postNextWord(request: Request) {
 
-  // リクエストのペイロードを取得
   const requestJson = await request.json();
-  // JSONの中からnextWordを取得
+
   const nextWord = requestJson["nextWord"];
   const previousWord = requestJson["previousWord"];
 
@@ -197,6 +308,11 @@ export function startServer() {
     // POST /reset: リセットする
     if (request.method === "POST" && pathname === "/reset") {
       return reset();
+    }
+
+    // POST /standby: 待機する
+    if (request.method === "POST" && pathname === "/standby") {
+      return await standby(request);
     }
 
     return serveDir(
