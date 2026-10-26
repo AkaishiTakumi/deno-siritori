@@ -15,6 +15,7 @@
         "@std/http": "jsr:@std/http@^1.0.0",
         "vite": "npm:vite@^8.3.5"
     },
+    "nodeModulesDir": "auto",
     "tasks": {
         "build:watch": "deno run -A npm:vite build --watch"
     }
