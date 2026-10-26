@@ -52,8 +52,15 @@ function getHistory(roomId: UUID) {
  * @returns 検証結果
  */
 function validateMagicWord(value: unknown) {
-  if (typeof value !== "string") return null;
+  if (typeof value !== "string") {
+    console.error("Invalid magic word type");
+    return null;
+  }
   const magicWord = value.trim();
+  if (magicWord.length < 5 || magicWord.length > 50) {
+    console.error("Invalid magic word length");
+    return null;
+  }
   return magicWord.length >= 5 && magicWord.length <= 50 ? magicWord : null;
 }
 
@@ -68,24 +75,46 @@ async function createRoom(
 ) {
 
   const rooms = await sql`
-    INSERT INTO rooms (id, magic_word, host_name, number_of_players, is_active, started_at, finished_at, created_at, updated_at)
+    INSERT INTO rooms (
+      id
+      , magic_word
+      , host_name
+      , max_players
+      , is_active
+      , started_at
+      , finished_at
+      , created_at
+      , updated_at
+    )
     VALUES (
-      gen_random_uuid(),
-      ${magicWord},
-      ${hostName},
-      1,
-      true,
-      NOW(),
-      NULL,
-      NOW(),
-      NOW()
+      gen_random_uuid()
+      , ${magicWord}
+      , ${hostName}
+      , 2
+      , true
+      , NOW()
+      , NULL
+      , NOW()
+      , NOW()
     )
     RETURNING id
   `;
   const roomId: UUID = rooms[0].id as UUID;
   await sql`
-    INSERT INTO room_members (room_id, user_name, created_at)
-    VALUES (${roomId}, ${hostName}, NOW())
+    INSERT INTO room_members (
+      id
+      , room_id
+      , user_name
+      , created_at
+      , updated_at
+    )
+    VALUES (
+      gen_random_uuid()
+      , ${roomId}
+      , ${hostName}
+      , NOW()
+      , NOW()
+    )
   `;
   return roomId;
 }
@@ -148,13 +177,20 @@ async function standby(body: StandbyRequestBody) {
     `;
     if (member.length === 0) {
       await sql`
-        INSERT INTO room_members (room_id, user_name, created_at)
-        VALUES (${roomId}, ${userName}, NOW())
-      `;
-      await sql`
-        UPDATE rooms
-        SET number_of_players = number_of_players + 1, updated_at = NOW()
-        WHERE id = ${roomId}
+        INSERT INTO room_members (
+          id
+          , room_id
+          , user_name
+          , created_at
+          , updated_at
+        )
+        VALUES (
+          gen_random_uuid()
+          , ${roomId}
+          , ${userName}
+          , NOW()
+          , NOW()
+        )
       `;
     }
   }
@@ -169,7 +205,7 @@ async function standby(body: StandbyRequestBody) {
  */
 async function roomStatus(roomId: UUID) {
   const rooms = await sql`
-    SELECT id, magic_word, host_name, number_of_players, is_active
+    SELECT id, magic_word, host_name, max_players, is_active
     FROM rooms WHERE id = ${roomId} LIMIT 1
   `;
   if (rooms.length === 0) {
@@ -184,7 +220,7 @@ async function roomStatus(roomId: UUID) {
     "roomId": rooms[0].id,
     "magicWord": rooms[0].magic_word,
     "hostName": rooms[0].host_name,
-    "numberOfPlayers": rooms[0].number_of_players,
+    "maxPlayers": rooms[0].max_players,
     "isActive": rooms[0].is_active,
     "members": members.map((member) => member.user_name),
   });
@@ -299,56 +335,72 @@ function postNextWord(body: PostNextWordRequestBody) {
 export function startServer() {
 
   Deno.serve({ port: 8000 }, async (request) => {
-    const url = new URL(request.url);
-    const pathname = url.pathname;
+    try {
+      const url = new URL(request.url);
+      const pathname = url.pathname;
 
-    // GET /siritori: 直前の単語を返す
-    if (request.method === "GET" && pathname === "/siritori") {
-      const roomId: UUID = url.searchParams.get("room-id") as UUID;
-      return getPreviousWord(roomId);
-    }
+      // GET /siritori: 直前の単語を返す
+      if (request.method === "GET" && pathname === "/siritori") {
+        const roomId: UUID = url.searchParams.get("room-id") as UUID;
+        return getPreviousWord(roomId);
+      }
 
-    // POST /siritori: 次の単語を受け取って保存する
-    if (request.method === "POST" && pathname === "/siritori") {
-      const body = await request.json() as PostNextWordRequestBody;
-      return postNextWord(body);
-    }
+      // POST /siritori: 次の単語を受け取って保存する
+      if (request.method === "POST" && pathname === "/siritori") {
+        const body = await request.json() as PostNextWordRequestBody;
+        return postNextWord(body);
+      }
 
-    // POST /reset: リセットする
-    if (request.method === "POST" && pathname === "/reset") {
-      const body = await request.json().catch(() => ({})) as { roomId: UUID; };
-      return reset(body.roomId);
-    }
+      // POST /reset: リセットする
+      if (request.method === "POST" && pathname === "/reset") {
+        const body = await request.json().catch(() => ({})) as { roomId: UUID; };
+        return reset(body.roomId);
+      }
 
-    // POST /standby: 待機する
-    if (request.method === "POST" && pathname === "/standby") {
-      const body = await request.json() as StandbyRequestBody;
-      return await standby(body);
-    }
+      // POST /standby: 待機する
+      if (request.method === "POST" && pathname === "/standby") {
+        const body = await request.json();
+        if (!body) {
+          console.error("Request body is not set");
+        }
+        if (typeof body.userName !== "string") {
+          console.error("Request body userName is not a string");
+        }
+        if (typeof body.magicWord !== "string") {
+          console.error("Request body magicWord is not a string");
+        }
+        if (typeof body.isHost !== "boolean") {
+          console.error("Request body isHost is not a boolean");
+        }
+        return await standby(body);
+      }
 
-    // GET /room-status: ルームの状態を返す
-    if (request.method === "GET" && pathname === "/room-status") {
-      const roomId: UUID = url.searchParams.get("room-id") as UUID;
-      return roomId
-        ? await roomStatus(roomId)
-        : jsonResponse({
-          "errorMessage": "roomId が設定されていません",
-          "errorCode": "roomIdNotSet",
-        }, 400);
+      // GET /room-status: ルームの状態を返す
+      if (request.method === "GET" && pathname === "/room-status") {
+        const roomId: UUID = url.searchParams.get("room-id") as UUID;
+        return roomId
+          ? await roomStatus(roomId)
+          : jsonResponse({
+            "errorMessage": "roomId が設定されていません",
+            "errorCode": "roomIdNotSet",
+          }, 400);
+      }
+
+    } catch (e) {
+      return jsonResponse({
+        "error": e instanceof Error ? `エラー: ${e.message}` : "エラー: Unknown error",
+        "stack": e instanceof Error ? e.stack : "undefined",
+      }, 500);
     }
 
     return serveDir(
       request,
       {
-        /*
-        - fsRoot: 公開するフォルダを指定
-        - urlRoot: フォルダを展開するURLを指定。今回はlocalhost:8000/に直に展開する
-        - enableCors: CORSの設定を付加するか
-        */
         fsRoot: "dist",
         urlRoot: "",
         enableCors: true,
       },
     );
+
   });
 };
