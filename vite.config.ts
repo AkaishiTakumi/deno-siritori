@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  root: "public", // ソースコードのある場所
+  root: "public",
   build: {
-    outDir: "../dist", // 出力先（./dist）
+    outDir: "../dist",
     emptyOutDir: true,
   },
 });

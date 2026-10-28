@@ -1,17 +1,17 @@
 // 前の単語を保持する変数
 let previousWord: string;
 
-const nextWordSendButtonElement = document.querySelector("#nextWordSendButton") as HTMLButtonElement;
+const nextWordSendButtonElement = document.getElementById("next-word-send-button") as HTMLButtonElement;
 
-const resetSendButtonElement = document.querySelector("#resetSendButton") as HTMLButtonElement;
+const resetSendButtonElement = document.getElementById("reset-send-button") as HTMLButtonElement;
 
 globalThis.onload = async (_) => {
-  // GET /shiritoriを実行
-  const response = await fetch("/shiritori", { method: "GET" });
+  // GET /siritoriを実行
+  const response = await fetch("/siritori", { method: "GET" });
   // responseの中からレスポンスのテキストデータを取得
   previousWord = await response.text();
   // id: previousWordのタグを取得
-  const paragraph = document.querySelector("#previousWord") as HTMLElement;
+  const paragraph = document.getElementById("previous-word") as HTMLElement;
   // 取得したタグの中身を書き換える
   paragraph.innerHTML = `前の単語: ${previousWord}`;
 };
@@ -19,14 +19,14 @@ globalThis.onload = async (_) => {
 // 送信ボタンの押下時に実行
 nextWordSendButtonElement.onclick = async (_) => {
   // inputタグを取得
-  const nextWordInput = document.querySelector("#nextWordInput") as HTMLInputElement;
+  const nextWordInput = document.getElementById("next-word-input") as HTMLInputElement;
   // inputの中身を取得
   const nextWordInputText = nextWordInput.value;
 
-  // POST /shiritoriを実行
+  // POST /siritoriを実行
   // 次の単語をresponseに格納
   const response = await fetch(
-    "/shiritori",
+    "/siritori",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ nextWordSendButtonElement.onclick = async (_) => {
   const responseJson = await response.json();
 
   // id: previousWordのタグを取得
-  const paragraph = document.querySelector("#previousWord") as HTMLElement;
+  const paragraph = document.getElementById("previous-word") as HTMLElement;
 
   // previousWordを更新
   previousWord = responseJson["previousWord"];
