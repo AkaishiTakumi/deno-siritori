@@ -46,7 +46,7 @@ async function updateRoomState() {
   };
   const result = await response.json() as GetRoomStatusResponse;
   if (result.shouldRejoin) {
-    globalThis.location.href = "/mode-select/";
+    globalThis.location.href = "/";
     return;
   }
   previousWord = result.previousWord;
@@ -156,7 +156,7 @@ resetSendButtonElement.onclick = async (_) => {
 
   const result = await response.json() as PostResetResponse;
   if (result.shouldRejoin) {
-    globalThis.location.href = "/mode-select/";
+    globalThis.location.href = "/";
     return;
   }
 
