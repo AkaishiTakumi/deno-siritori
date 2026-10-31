@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ゲーム設定</title>
 
-  <link rel="stylesheet" href="/public/common.css">
+  <link rel="stylesheet" href="/common.css">
   <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -14,27 +14,62 @@
 
   <div>
     <div>ユーザー名</div>
-    <input id="user-name" type="text"></input>
+    <input id="profile-name-input" type="text" placeholder="Guest">
   </div>
 
-  <div>「ん」が付いたら負け</div>
-  <div>一音の単語は使えない</div>
-  <div>一回使った単語は使えない</div>
-  <div>名詞のみ</div>
-  <div>制限時間あり</div>
-
   <div>
+    <input type="checkbox" id="n-checkbox" checked>
+    <label for="n-checkbox">「ん」が付いたら負け</label>
+  </div>
+  <div>
+    <input type="checkbox" id="single-sound-checkbox" class="parent-checkbox" checked>
+    <label for="single-sound-checkbox">一音の単語は使えない</label>
+    <div class="child-wrap">
+      <input type="checkbox" id="single-sound-lose-checkbox" checked>
+      <label for="single-sound-lose-checkbox">一音の単語を使うと負け</label>
+    </div>
+  </div>
+  <div>
+    <input type="checkbox" id="one-time-checkbox" class="parent-checkbox" checked disabled>
+    <label for="one-time-checkbox">一回使った単語は使えない</label>
+    <div class="child-wrap">
+      <input type="checkbox" id="one-time-lose-checkbox" checked>
+      <label for="one-time-lose-checkbox">一回使った単語を使うと負け</label>
+    </div>
+  </div>
+  <!-- <div>名詞のみ</div> -->
+  <div>
+    <input type="checkbox" id="time-limit-checkbox" checked>
+    <label for="time-limit-checkbox">制限時間あり</label>
+    <input type="number" id="time-limit-input" min="1" max="60" value="30">秒
+  </div>
+
+  <div id="magic-word-container" hidden>
     <div>あいことば</div>
-    <input id="magic-word" type="text"></input>
+    <input id="magic-word-input" type="text" placeholder="5~50文字">
   </div>
 
-  <div>サーバー</div>
+  <!-- <div>サーバー</div> -->
 
   <div>
-    <button id="start-button">はじめる</button>
-    <button id="apply-button">募集する</button>
-    <button id="participate-button">参加する</button>
+    <div>
+      <button id="back-button">戻る</button>
+    </div>
+    <div id="solo-game-container" hidden>
+      <button id="start-button">はじめる</button>
+    </div>
+    <div id="friend-game-container" hidden>
+      <button id="apply-button">募集する</button>
+      <button id="participate-button">参加する</button>
+    </div>
   </div>
+
+  <div>
+    <div id="error-message"></div>
+    <div id="error-location"></div>
+  </div>
+
+  <script type="module" src="./script.ts"></script>
 
 </body>
 

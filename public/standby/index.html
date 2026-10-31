@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
+  <title>待機室</title>
 
-  <link rel="stylesheet" href="/public/common.css">
+  <link rel="stylesheet" href="/common.css">
   <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -23,7 +23,14 @@
 
   <div id="number-of-players"></div>
 
-  <div id="start-button">はじめる</div>
+  <button id="start-button" disabled hidden>はじめる</button>
+
+  <div>
+    <div id="error-message"></div>
+    <div id="error-location"></div>
+  </div>
+
+  <script type="module" src="./script.ts"></script>
 
 </body>
 

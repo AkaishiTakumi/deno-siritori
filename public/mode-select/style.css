@@ -1,0 +1,8 @@
+.child-wrap {
+  display: none;
+  margin-left: 20px;
+}
+
+.parent-checkbox:checked+label+.child-wrap {
+  display: block;
+}

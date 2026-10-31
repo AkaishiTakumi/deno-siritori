@@ -141,7 +141,15 @@ vite.config.ts.timestamp-*
 
 # VSCode settings
 # .vscode/
+*.code-workspace
 
 # documentation
 .docs/.commit_template
 .docs/prompt.md
+.docs/ai-chat.md
+
+# Worker configuration
+worker-configuration.d.ts
+
+# wrangler
+.wrangler/

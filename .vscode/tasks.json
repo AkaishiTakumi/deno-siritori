@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Deno: Build Watch",
+            "label": "Vite: Build Watch",
             "type": "shell",
-            "command": "deno task build:watch",
+            "command": "npx vite build --watch",
             "isBackground": true,
             "problemMatcher": {
                 "owner": "typescript",
@@ -17,11 +17,21 @@
                     "beginsPattern": "watching|building|built",
                     "endsPattern": "built in|built|Watching for changes"
                 }
-            },
-            "presentation": {
-                "reveal": "always",
-                "panel": "dedicated"
             }
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "npm run build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Deploy",
+            "type": "shell",
+            "command": "npm run deploy"
         }
     ]
 }

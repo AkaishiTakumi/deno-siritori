@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>しりとり</title>
 
-  <link rel="stylesheet" href="/public/common.css">
+  <link rel="stylesheet" href="/common.css">
   <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -14,9 +14,14 @@
 
   <h1>しりとり</h1>
   <div id="previous-word"></div>
-  <input id="next-word-input" type="text" />
+  <input id="next-word-input" type="text">
   <button id="next-word-send-button">送信</button>
   <button id="reset-send-button">リセット</button>
+
+  <div>
+    <div id="error-message"></div>
+    <div id="error-location"></div>
+  </div>
 
   <script type="module" src="./script.ts"></script>
 
