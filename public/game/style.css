@@ -2,11 +2,6 @@
   max-width: 560px;
 }
 
-.previous-word-label {
-  color: #536678;
-  font-size: 0.9rem;
-}
-
 .previous-word {
   min-height: 70px;
   margin: 6px 0 20px;
