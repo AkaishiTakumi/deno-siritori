@@ -10,30 +10,34 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 
-<body>
+<body class="standby-page">
 
-  <div>
-    <div>あいことば</div>
-    <div id="magic-word"></div>
-  </div>
+  <main class="page-shell standby-shell">
+    <h1 class="page-title">待機室</h1>
 
-  <div>サーバーに公開</div>
+    <div class="room-info">
+      <div class="info-label">あいことば</div>
+      <div id="magic-word" class="magic-word"></div>
+    </div>
 
-  <div id="player-list"></div>
+    <div class="visibility-note">サーバーに公開</div>
 
-  <div id="number-of-players"></div>
+    <div id="player-list" class="player-list"></div>
 
-  <button id="start-button" disabled hidden>はじめる</button>
+    <div id="number-of-players" class="player-count"></div>
 
-  <div>
-    <div>スマホで遊びたい場合はこちらから</div>
-    <img src="/public/img/qrcode_siritori.akaishitakumi.workers.dev.png" alt="スマホで遊びたい場合はこちらから" width="200">
-  </div>
+    <button id="start-button" disabled hidden>はじめる</button>
 
-  <div>
-    <div id="error-message"></div>
-    <div id="error-location"></div>
-  </div>
+    <div class="qr-panel">
+      <div>スマホで遊びたい場合はこちらから</div>
+      <img src="/public/img/qrcode_siritori.akaishitakumi.workers.dev.png" alt="スマホで遊びたい場合はこちらから" width="200">
+    </div>
+
+    <div class="error-panel">
+      <div id="error-message"></div>
+      <div id="error-location"></div>
+    </div>
+  </main>
 
   <script type="module" src="./script.ts"></script>
 

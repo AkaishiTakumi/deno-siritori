@@ -1,0 +1,44 @@
+.standby-shell {
+  max-width: 560px;
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #d5e0e8;
+  border-radius: 10px;
+  background: #f7fafc;
+}
+
+.info-label,
+.visibility-note {
+  color: #536678;
+  font-size: 0.9rem;
+}
+
+.magic-word {
+  color: #123d5c;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.visibility-note {
+  margin: 18px 0;
+}
+
+.player-list {
+  min-height: 80px;
+  padding: 14px;
+  border: 1px solid #d5e0e8;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.player-count {
+  margin: 12px 0 18px;
+  color: #536678;
+}

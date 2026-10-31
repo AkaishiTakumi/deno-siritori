@@ -1,0 +1,36 @@
+.game-shell {
+  max-width: 560px;
+}
+
+.previous-word-label {
+  color: #536678;
+  font-size: 0.9rem;
+}
+
+.previous-word {
+  min-height: 70px;
+  margin: 6px 0 20px;
+  padding: 14px 16px;
+  border-left: 4px solid #1769aa;
+  color: #123d5c;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: #f1f7fb;
+}
+
+.word-entry {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.word-entry input {
+  min-width: 0;
+  flex: 1;
+}
+
+@media (max-width: 420px) {
+  .word-entry {
+    display: grid;
+  }
+}

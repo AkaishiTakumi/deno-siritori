@@ -10,23 +10,28 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 
-<body>
+<body class="game-page">
 
-  <h1>しりとり</h1>
-  <div id="previous-word"></div>
-  <input id="next-word-input" type="text">
-  <button id="next-word-send-button">送信</button>
-  <button id="reset-send-button">リセット</button>
+  <main class="page-shell game-shell">
+    <h1 class="page-title">しりとり</h1>
+    <div class="previous-word-label">前の単語</div>
+    <div id="previous-word" class="previous-word"></div>
+    <div class="word-entry">
+      <input id="next-word-input" type="text" aria-label="次の単語">
+      <button id="next-word-send-button">送信</button>
+    </div>
+    <button id="reset-send-button" class="secondary-button">リセット</button>
 
-  <div>
-    <div>スマホで遊びたい場合はこちらから</div>
-    <img src="/public/img/qrcode_siritori.akaishitakumi.workers.dev.png" alt="スマホで遊びたい場合はこちらから" width="200">
-  </div>
+    <div class="qr-panel">
+      <div>スマホで遊びたい場合はこちらから</div>
+      <img src="/public/img/qrcode_siritori.akaishitakumi.workers.dev.png" alt="スマホで遊びたい場合はこちらから" width="200">
+    </div>
 
-  <div>
-    <div id="error-message"></div>
-    <div id="error-location"></div>
-  </div>
+    <div class="error-panel">
+      <div id="error-message"></div>
+      <div id="error-location"></div>
+    </div>
+  </main>
 
   <script type="module" src="./script.ts"></script>
 

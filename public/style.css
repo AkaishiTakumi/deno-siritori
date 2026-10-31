@@ -1,0 +1,14 @@
+.home-shell {
+  max-width: 480px;
+  text-align: center;
+}
+
+.page-lead {
+  margin: -12px 0 24px;
+  color: #536678;
+}
+
+.play-actions {
+  display: grid;
+  gap: 12px;
+}
